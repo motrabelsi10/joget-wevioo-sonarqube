@@ -4,7 +4,6 @@ For more information, please refer to https://community.joget.org
 
 8.1.4
 =====
-ec0bbd469 Fixed: wflow-consoleweb - Email Validator - Fixed email validator not applied in profile, user creation, email smtp and email tool. @8.1-SNAPSHOT
 fa8b4e7f0 Fixed: wflow-consoleweb - UI - RTL Issue for App Import, Create New App, and Plugin Upload. @8.1-SNAPSHOT
 927fe0a68 Fixed: wflow-core - UI Builder - AJAX event can't update correctly due to cache key is generated wrongly. @8.1-SNAPSHOT
 2c0c5c9aa Fixed: wflow-consoleweb - JSON API Options Binder - Dependency value is not handled correctly. T4676 @8.1-SNAPSHOT
