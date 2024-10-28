@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.DateFormat;
@@ -27,9 +28,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.map.ListOrderedMap;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.merge.MergeStrategy;
 import static org.joget.apps.app.controller.UserviewWebController.isBackendLicense;
 import org.joget.apps.app.dao.AppDefinitionDao;
 import org.joget.apps.app.dao.AppResourceDao;
@@ -61,6 +66,11 @@ import org.joget.apps.app.model.ImportAppException;
 import org.joget.apps.app.model.ProcessFormModifier;
 import org.joget.apps.app.model.StartProcessFormModifier;
 import org.joget.apps.app.service.AppDevUtil;
+import static org.joget.apps.app.service.AppDevUtil.PROPERTY_GIT_PASSWORD;
+import static org.joget.apps.app.service.AppDevUtil.PROPERTY_GIT_URI;
+import static org.joget.apps.app.service.AppDevUtil.PROPERTY_GIT_USERNAME;
+import static org.joget.apps.app.service.AppDevUtil.getAppGitDirectory;
+import static org.joget.apps.app.service.AppDevUtil.getGitBranchName;
 import org.joget.apps.app.service.AppOverviewUtil;
 import org.joget.apps.app.service.AppResourceUtil;
 import org.joget.apps.app.service.AppService;
@@ -1613,13 +1623,22 @@ public class ConsoleWebController {
     }
 
     @RequestMapping("/json/console/app/(*:appId)/version/list")
-    public void consoleAppVersionListJson(Writer writer, @RequestParam(value = "appId") String appId, @RequestParam(value = "callback", required = false) String callback, @RequestParam(value = "name", required = false) String name, @RequestParam(value = "sort", required = false) String sort, @RequestParam(value = "desc", required = false) Boolean desc, @RequestParam(value = "start", required = false) Integer start, @RequestParam(value = "rows", required = false) Integer rows) throws IOException, JSONException {
+    public void consoleAppVersionListJson(Writer writer, @RequestParam(value = "appId") String appId, @RequestParam(value = "callback", required = false) String callback, @RequestParam(value = "name", required = false) String name, @RequestParam(value = "sort", required = false) String sort, @RequestParam(value = "desc", required = false) Boolean desc, @RequestParam(value = "start", required = false) Integer start, @RequestParam(value = "rows", required = false) Integer rows) throws IOException, JSONException, GitAPIException, URISyntaxException {
         Collection<AppDefinition> appDefList = appDefinitionDao.findVersions(appId, sort, desc, null, null);
 
         TreeMap<Long, AppDefinition> appDefMap = new TreeMap<>();
         if (!appDefList.isEmpty()) {
             for (AppDefinition appDef: appDefList) {
-                appDefMap.put(appDef.getVersion(), appDef);
+                File dir = AppDevUtil.fileGetFileObject(appDef, ".", false);
+                if (dir != null && dir.isDirectory()) {
+                    // Check if folder is empty delete app version
+                    Collection<File> files = FileUtils.listFiles(dir, new String[]{ "json", "xml", "xpdl", "jar" }, true);
+                    if (files == null || files.isEmpty()) {
+                        appService.deleteAppDefinitionVersion(appId, appDef.getVersion());
+                    } else {
+                        appDefMap.put(appDef.getVersion(), appDef);
+                    }
+                }
             }            
             
             if (!AppDevUtil.isGitDisabled()) {
@@ -1628,8 +1647,8 @@ public class ConsoleWebController {
                     AppDefinition appDef = appDefList.iterator().next();
                     List<String> branches = AppDevUtil.getAppGitBranches(appDef);
                     for (String branch: branches) {
-                        StringTokenizer st = new StringTokenizer(branch, "_");
-                        String version = (st.countTokens() == 2) ? branch.substring(branch.indexOf("_")+1) : null;
+                        int versionIndex = branch.lastIndexOf("_");
+                        String version = (versionIndex != -1) ? branch.substring(versionIndex + 1) : null;                      
                         if (version != null && !appDefMap.containsKey(Long.valueOf(version))) {
                             AppDefinition tempAppDef = AppDevUtil.createDummyAppDefinition(appId, Long.valueOf(version));
                             tempAppDef.setDescription("Git: " + branch);
@@ -3743,9 +3762,47 @@ public class ConsoleWebController {
     
     @RequestMapping("/console/app/(*:appId)/(~:version)/builders")
     public String consoleBuilderList(ModelMap map, @RequestParam String appId, @RequestParam(required = false) String version) {
-        String result = checkVersionExist(map, appId, version);
+        String result = checkVersionExist(map, appId, version);       
+        String baseDir = AppDevUtil.getAppDevBaseDirectory();       
         if (result != null) {
-            return result;
+            Collection<AppDefinition> appDefList = appDefinitionDao.findVersions(appId, null, null, null, null);
+            TreeMap<Long, AppDefinition> appDefMap = new TreeMap<>();
+            if (!appDefList.isEmpty()) {
+                for (AppDefinition appDef: appDefList) {
+                    appDefMap.put(appDef.getVersion(), appDef);
+                }            
+            
+                if (!AppDevUtil.isGitDisabled()) {
+                // get app versions from Git
+                    try {                                              
+                        AppDefinition appDef = appDefList.iterator().next();  
+                        String gitBranch = getGitBranchName(appDef);
+                        String projectDirName = getAppGitDirectory(appDef);
+                        File projectDir = AppDevUtil.dirSetup(baseDir, projectDirName);
+                        Git localGit = AppDevUtil.gitInit(projectDir);
+  
+                        Properties prop = AppDevUtil.getAppDevProperties(appDef);
+                        String gitUri = prop.getProperty(PROPERTY_GIT_URI);
+                        String gitUsername = prop.getProperty(PROPERTY_GIT_USERNAME);
+                        String gitPassword = prop.getProperty(PROPERTY_GIT_PASSWORD);
+                                                            
+                        AppDevUtil.gitAddRemote(localGit, gitUri);
+                        AppDevUtil.gitPull(projectDir, localGit, gitBranch, gitUri, gitUsername, gitPassword, MergeStrategy.RECURSIVE, appDef);
+                        List<String> branches = AppDevUtil.getAppGitBranches(appDef);
+                        for (String branch: branches) {                     
+                            int versionIndex = branch.lastIndexOf("_");
+                            String newVersion = (versionIndex != -1) ? branch.substring(versionIndex + 1) : null;     
+                            if (newVersion != null && !appDefMap.containsKey(Long.valueOf(newVersion)) && newVersion.equals(version)) {
+                                AppDefinition newAppDef = appService.createNewAppDefinitionVersion(appId, appDefinitionDao.getLatestVersion(appId));
+                            }                        
+                        }            
+                    } catch(Exception e) {
+                        LogUtil.error(getClass().getName(), e, e.getMessage());
+                    }
+                }
+            } else {
+                return result;
+            }        
         }
 
         AppDefinition appDef = appService.getAppDefinition(appId, version);
