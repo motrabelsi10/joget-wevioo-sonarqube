@@ -4,6 +4,7 @@ For more information, please refer to https://community.joget.org
 
 8.1.7
 =====
+e7c81cf9b Fixed: wflow-commons - Security - Update Spring Security to 5.8.15 for CVE-2024-38821. @7.1-SNAPSHOT
 12dec76fe Fixed: wflow-consoleweb - App Composer - App versioning is not synced over remote git. T4464 @8.1-SNAPSHOT
 ebbd3b4ed Fixed: wflow-consoleweb - Property Editor - Icon Text Field - Not align correctly in RTL. @8.1-SNAPSHOT
 25b379e8d Fixed: wflow-consoleweb - Information Tiles - Chart is not properly align with its container. @8.1-SNAPSHOT
