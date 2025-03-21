@@ -3,6 +3,16 @@ Joget DX 7 COMMUNITY
 For more information, please refer to 
 https://dev.joget.org/community/display/DX7/Joget+DX+7+Knowledge+Base
 
+CHANGES IN 7.1.50
+=================
+e2b6adbfc Fixed: wflow-cosoleweb - Manage Plugins - Refactoring duplicate code. @7.0-SNAPSHOT
+863c109cb Fixed: wflow-consoleweb - Manage Plugins - Slow loading in cloud. @7.0-SNAPSHOT
+efc8e0df0 Fixed: wflow-core - Text Field - Fixed text field not applying number formatting on Enter key submit. T5709 @7.0-SNAPSHOT
+9ebbd21a9 Fixed: wflow-core - File Upload - Still able to select multiple files after set it to single file. @7.0-SNAPSHOT
+8dd2fff11 Fixed: wflow-consoleweb - File Upload - Progress bar not working when upload field in form grid. T5583 @7.0-SNAPSHOT
+e2548124e Fixed: wflow-consoleweb - UI Themes - The hide menu button in the user view does not work in some browser window widths. T5822 @7.0-SNAPSHOT
+e43abfe2e Fixed: wflow-core - Login - Strip HTML tags from parameters in userview. @7.0-SNAPSHOT
+
 CHANGES IN 7.1.49
 =================
 c21873e11 Fixed: wflow-commons - Security - Update Spring Security to 5.8.16. T5364 @7.1-SNAPSHOT
