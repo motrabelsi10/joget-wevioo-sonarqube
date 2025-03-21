@@ -2,6 +2,32 @@ Joget DX COMMUNITY
 ====================
 For more information, please refer to https://community.joget.org
 
+8.1.12
+======
+aeb0f5a48 Fixed: wflow-consoleweb - UI Builder - Can't add menu to category at the bottom of long scrolled sidebar. @8.1-SNAPSHOT
+5cb5f6096 Fixed: wflow-plugin-base - Manage Plugins - Plugins built for addon builder disappeared after update addon builder. @7.0-SNAPSHOT
+854c0532a Fixed: wflow-install - Increased column size for variables in wf_history_process and wf_history_activity. @8.1-SNAPSHOT
+bebc0e151 Fixed: wflow-consoleweb - MySQL - Increased column size for variables in wf_history_process and wf_history_activity to prevent truncation errors. @8.1-SNAPSHOT
+f52d754bb Fixed: wflow-consoleweb - App Composer Advance Tools - Fixed preview header overlapping issue. @8.1-SNAPSHOT
+c85ba4bc0 Fixed: wflow-core - File Upload - Regression of 76df9a23. PWA causing file upload progress bar not working. T5583 @8.1-SNAPSHOT
+9039e4ee9 Fixed: wflow-consoleweb - Property Editor - Fixed property fields go missing on editing the record. T5419 @8.1-SNAPSHOT
+fe1d88da6 Fixed: wflow-core - Email Tool - Fixed hash variables could not input for the Iterator Process Tool in the Email Tool, specifically in the To (Specific Email Address) and From fields. T5419 @8.1-SNAPSHOT
+2ca19d841 Fixed: wflow-consoleweb - Ajax Themes - Fixed when initial page load, missing URL in the window.history.state. @8.0-SNAPSHOT
+1ee5cc1cc Fixed: wflow-consoleweb - Ajax Theme - Fixed during "Back" button click loses the navigation history. @8.1-SNAPSHOT
+96afc1ea8 Fixed: wflow-core - User Profile - Fixed the User Profile UI menu, submitting the form on the page fails when the email field is set to read-only or hidden. T5785 @8.1-SNAPSHOT
+0bcbf81f1 Fixed: wflow-consoleweb - Size Property fields - Fixed border issue in light/dark themes. @8.1-SNAPSHOT
+0460238ad Fixed: wflow-consoleweb - Process Builder - The element does not follow cursor and page jump to top when drag a new element into participant at the bottom of scrolled canvas. @8.1-SNAPSHOT
+afa8da568 Fixed: wflow-consoleweb - App Composer - Delete builder item throw JS error in console. @8.1-SNAPSHOT
+d2af40df8 Fixed: wflow-core - Form Element - Cloud security AOP causing NPE when setting form element OSGI plugin unique key. @8.1-SNAPSHOT
+02a383b58 Fixed: wflow-consoleweb - Multiselect Box - Fixed placeholder is not showing on dx8 themes #T5830 @8.1-SNAPSHOT
+e2b6adbfc Fixed: wflow-cosoleweb - Manage Plugins - Refactoring duplicate code. @7.0-SNAPSHOT
+863c109cb Fixed: wflow-consoleweb - Manage Plugins - Slow loading in cloud. @7.0-SNAPSHOT
+efc8e0df0 Fixed: wflow-core - Text Field - Fixed text field not applying number formatting on Enter key submit. T5709 @7.0-SNAPSHOT
+9ebbd21a9 Fixed: wflow-core - File Upload - Still able to select multiple files after set it to single file. @7.0-SNAPSHOT
+8dd2fff11 Fixed: wflow-consoleweb - File Upload - Progress bar not working when upload field in form grid. T5583 @7.0-SNAPSHOT
+e2548124e Fixed: wflow-consoleweb - UI Themes - The hide menu button in the user view does not work in some browser window widths. T5822 @7.0-SNAPSHOT
+e43abfe2e Fixed: wflow-core - Login - Strip HTML tags from parameters in userview. @7.0-SNAPSHOT
+
 8.1.11
 ======
 0f7f14626 Fixed: wflow-consoleweb - Mandatory Fields Icon Placement - Fixed inconsistent icon placement to denote Mandatory Fields in Custom Builder. @8.1-SNAPSHOT
