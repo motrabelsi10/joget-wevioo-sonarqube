@@ -5,6 +5,7 @@ https://dev.joget.org/community/display/DX7/Joget+DX+7+Knowledge+Base
 
 CHANGES IN 7.0.50
 =================
+5cb5f6096 Fixed: wflow-plugin-base - Manage Plugins - Plugins built for addon builder disappeared after update addon builder. @7.0-SNAPSHOT
 e2b6adbfc Fixed: wflow-cosoleweb - Manage Plugins - Refactoring duplicate code. @7.0-SNAPSHOT
 863c109cb Fixed: wflow-consoleweb - Manage Plugins - Slow loading in cloud. @7.0-SNAPSHOT
 efc8e0df0 Fixed: wflow-core - Text Field - Fixed text field not applying number formatting on Enter key submit. T5709 @7.0-SNAPSHOT
