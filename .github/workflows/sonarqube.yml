@@ -7,7 +7,7 @@ on:
 
 jobs:
   sonarqube:
-    name: Analyze Joget modules with SonarQube
+    name: Analyze with SonarQube (module: wflow-core)
     runs-on: ubuntu-latest
 
     steps:
@@ -27,14 +27,17 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      - name: Build and Analyze wflow-core
+      - name: Build with Maven (wflow-core)
+        working-directory: wflow-core
+        run: mvn clean install -DskipTests
+
+      - name: Run SonarQube analysis (wflow-core)
         working-directory: wflow-core
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          mvn clean install -DskipTests
           mvn sonar:sonar \
-            -Dsonar.projectKey=joget-wevioo-wflow-core \
+            -Dsonar.projectKey=joget-wevioo-sonarqube \
             -Dsonar.host.url=http://192.168.193.128:9000 \
             -Dsonar.login=$SONAR_TOKEN
 
