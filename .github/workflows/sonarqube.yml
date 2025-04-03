@@ -7,7 +7,7 @@ on:
 
 jobs:
   sonarqube:
-    name: Analyze with SonarQube (module: wflow-core)
+    name: Analyze with SonarQube
     runs-on: ubuntu-latest
 
     steps:
